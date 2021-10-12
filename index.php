@@ -1,5 +1,6 @@
 <?php
     require_once 'Monitoring.php';
+    require_once 'Alarm.php';
 
     // TODO: Подумать как задавать настройки (класс? отдельный cfg-файл?)
     const data_file = 'data.txt';

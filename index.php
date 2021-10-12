@@ -1,9 +1,15 @@
 <?php
     require_once 'Monitoring.php';
 
-    $sites = file_get_contents('data.txt');
+    // TODO: Подумать как задавать настройки (класс? отдельный cfg-файл?)
+    const data_file = 'data.txt';
+
+    $sites = file_get_contents(data_file);
 
     $monitor = new Monitoring($sites);
 
-    $result = $monitor->checkSites();
+    $monitoring_result = $monitor->checkSites();
 
+    $alarm = new Alarm($monitoring_result);
+
+    $alarm->checkResults();

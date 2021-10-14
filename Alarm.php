@@ -1,5 +1,6 @@
 <?php
 // TODO: Подумать, как лучше реализовать отправку данных в БД из этого класса. Сейчас в конструктор прилетает db-переменная
+require_once 'DB.php';
 
 const telegrambotCfgFile = 'itgidsbotping.cfg.php';
 
@@ -19,11 +20,11 @@ class Alarm {
     private $monitoring_result;
     private $db;
 
-    function __construct($monitoring_result, $db) {
-        // TODO: проверить $sites - массив строк и каждая строка = урл
+    function __construct($monitoring_result) {
+        // TODO: проверить $monitoring_result
         // TODO: проверить $db
         $this->monitoring_result = $monitoring_result;
-        $this->db = $db;
+        $this->db = new DB();
     }
 
     // Отправка уведомления в телеграм
@@ -61,7 +62,9 @@ class Alarm {
         // $this->sendVK($url, $result);
         // $this->sendWhatsapp($url, $result);
         // $this->sendViber($url, $result);
-        $this->db->addAlarm($url, $result);
+        if ($this->db) {
+            $this->db->addAlarm($url, $result);
+        }
     }
 
     // Проверка всех результатов однократной проверки

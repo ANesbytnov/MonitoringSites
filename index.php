@@ -8,13 +8,15 @@
     require_once 'Alarm.php';
     require_once 'DB.php';
 
-    // TODO: Подумать как задавать настройки (класс? отдельный cfg-файл?)
-    const data_file = 'data.txt';
-    $sites = file(data_file, FILE_IGNORE_NEW_LINES);
+    // Получаем список сайтов для проверки
+    $db = new DB();
+    $sites = $db->getSites();
+    unset($db);
 
+    // Выполняем проверку
     $monitor = new Monitoring($sites);
     $monitoring_result = $monitor->checkSites();
 
-    $db = new DB();
-    $alarm = new Alarm($monitoring_result, $db);
+    // Выполняем отправку алярмов
+    $alarm = new Alarm($monitoring_result);
     $alarm->checkResults();

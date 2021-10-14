@@ -1,0 +1,14 @@
+{
+    "name": "anesb/monitoring-sites",
+    "description": "Check sites",
+    "authors": [
+        {
+            "name": "ANesbytnov",
+            "email": "nesbytnovae@mail.ru"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^4.2",
+        "ext-mysqli": "*"
+    }
+}

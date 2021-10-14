@@ -1,17 +1,7 @@
 <?php
+
 // TODO: Подумать, как лучше реализовать отправку данных в БД из этого класса. Сейчас в конструктор прилетает db-переменная
 require_once 'DB.php';
-
-const telegrambotCfgFile = 'itgidsbotping.cfg.php';
-
-if (file_exists(telegrambotCfgFile)) {
-    // Так как репозиторий публичный и нельзя светить настройки телеграм бота
-    include_once telegrambotCfgFile;
-} else {
-    define("BOT_TOKEN", '');
-    define("API_URL", '');
-    define("chatID", '');
-}
 
 // TODO: Подумать, как уведомлять нескольких человек в телеграме, в email? Возможно в БД надо сделать структуру вида САЙТ => КОГО_И_КАК_УВЕДОМИТЬ
 
@@ -29,8 +19,9 @@ class Alarm {
 
     // Отправка уведомления в телеграм
     private function sendAlarmTelegram($url, $result) {
-        $reply = urlencode('Сайт ' . $url . ' недоступен. Ошибка: ' . $result);
-        $sendto = API_URL . 'sendmessage?chat_id=' . chatID . '&text=' . $reply;
+
+        $reply = urlencode('Страница ' . $url . ' недоступна. Ошибка: ' . $result);
+        $sendto = $_ENV['API_URL'] . 'sendmessage?chat_id=' . $_ENV['CHAT_ID'] . '&text=' . $reply;
         file_get_contents($sendto);
     }
 

@@ -1,7 +1,5 @@
 <?php
 
-const dbCfgFile = 'db.cfg.php';
-
 /*
 TODO: Подумать над структурой БД
 
@@ -59,7 +57,7 @@ class DB
 {
 
     private $dbconn = null;
-    private $dbconn_error = null;
+//    private $dbconn_error = null;
 
     public function __construct() {
         $this->connect();
@@ -76,28 +74,17 @@ class DB
             return false;
         }
 
-        // TODO: Где лучше хранить настройки БД?
-        if (file_exists(dbCfgFile)) {
-            // Так как репозиторий публичный и нельзя светить настройки БД
-            include_once dbCfgFile;
-        } else {
-            define("dbServer", '');
-            define("dbName", '');
-            define("dbUser", '');
-            define("dbPass", '');
-        }
-
         // Create connection
-        $conn = new mysqli(dbServer, dbUser, dbPass, dbName);
+        $conn = new mysqli($_ENV['DBSERVER'], $_ENV['DBUSER'], $_ENV['DBPASS'], $_ENV['DBNAME']);
 
         // Check connection
         if ($conn->connect_error) {
-            $this->dbconn_error = $conn->connect_error;
+//            $this->dbconn_error = $conn->connect_error;
             $this->dbconn = null;
             return false;
         }
 
-        $this->dbconn_error = null;
+//        $this->dbconn_error = null;
         $this->dbconn = $conn;
 
         return true;

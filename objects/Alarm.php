@@ -1,7 +1,7 @@
 <?php
 
 // TODO: Подумать, как лучше реализовать отправку данных в БД из этого класса. Сейчас в конструктор прилетает db-переменная
-require_once 'DB.php';
+require_once '../config/DB.php';
 
 // TODO: Подумать, как уведомлять нескольких человек в телеграме, в email? Возможно в БД надо сделать структуру вида САЙТ => КОГО_И_КАК_УВЕДОМИТЬ
 
@@ -19,7 +19,6 @@ class Alarm {
 
     // Отправка уведомления в телеграм
     private function sendAlarmTelegram($url, $result) {
-
         $reply = urlencode('Страница ' . $url . ' недоступна. Ошибка: ' . $result);
         $sendto = $_ENV['API_URL'] . 'sendmessage?chat_id=' . $_ENV['CHAT_ID'] . '&text=' . $reply;
         file_get_contents($sendto);

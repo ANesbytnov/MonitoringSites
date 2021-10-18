@@ -9,8 +9,8 @@
     */
 
     require_once 'Monitoring.php';
-    require_once 'Alarm.php';
-    require_once 'DB.php';
+    require_once '/objects/Alarm.php';
+    require_once '/config/DB.php';
 
     // Autoloader
     define('DIR_VENDOR', __DIR__.'/vendor/');

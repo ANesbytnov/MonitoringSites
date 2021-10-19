@@ -63,13 +63,17 @@ class DB
         $this->connect();
     }
 
+    public function connected() {
+        return $this->dbconn != null;
+    }
+
     public function __destruct() {
         $this->disconnect();
     }
 
     // Подключение к БД
     public function connect() {
-        if ($this->dbconn) {
+        if ($this->connected()) {
             // Мы уже куда-то подключены, возвращаем false
             return false;
         }
@@ -92,7 +96,7 @@ class DB
 
     // Отключение от БД
     public function disconnect() {
-        if (!$this->dbconn) {
+        if (!$this->connected()) {
             // Мы никуда не подключены
             return false;
         }
@@ -106,7 +110,7 @@ class DB
     // Нужно запрещать выполнять SQL-запросы напрямую (поэтому private). Используем функции обертки (например, addAlarm, getLastAlarm).
     private function doQuery($sql) {
         // TODO: Написать код, выполняющий SQL-запрос (может быть SELECT, DELETE, UPDATE) из входного параметра, вернуть результат выполнения запроса
-        if (!$this->dbconn) {
+        if (!$this->connected()) {
             return false;
         }
 
@@ -115,20 +119,66 @@ class DB
 
     // Добавление строки в таблицу БД alarm
     public function addAlarm($url, $result) {
-        return $this->doQuery('
-            INSERT INTO alarm(url, result, datetime)
-            VALUES ("' . $url . '", "' . $result . '", NOW())
-        ');
+        $query = "
+            INSERT INTO alarm
+            SET
+                url = ?,
+                result = ?,
+                datetime = NOW()
+        ";
+
+        // подготовка запроса
+        $stmt = mysqli_prepare($this->dbconn, $query);
+
+        // инъекция
+        $safe_url = htmlspecialchars(strip_tags($url));
+        $safe_result = htmlspecialchars(strip_tags($result));
+
+        // привязываем значения
+        mysqli_stmt_bind_param($stmt, "ss", $safe_url, $safe_result, );
+
+
+        // Выполняем запрос
+        // Если выполнение успешно, то информация о пользователе будет сохранена в базе данных
+        return $stmt->execute();
+    }
+
+    // Добавление пользователя
+    public function addUser($firstname, $lastname, $email, $password) {
+        $query = "
+            INSERT INTO `users` (`firstname`, `lastname`, `email`, `password`)
+            VALUES (?, ?, ?, ?)
+        ";
+
+        // подготовка запроса
+        $stmt = mysqli_prepare($this->dbconn, $query);
+
+        // инъекция
+        $safe_firstname = htmlspecialchars(strip_tags($firstname));
+        $safe_lastname = htmlspecialchars(strip_tags($lastname));
+        $safe_email = htmlspecialchars(strip_tags($email));
+        $safe_password = htmlspecialchars(strip_tags($password));
+
+        // для защиты пароля
+        // хешируем пароль перед сохранением в базу данных
+        $password_hash = password_hash($safe_password, PASSWORD_BCRYPT);
+
+        mysqli_stmt_bind_param($stmt, "ssss", $safe_firstname, $safe_lastname, $safe_email, $password_hash);
+
+        // Выполняем запрос
+        // Если выполнение успешно, то информация о пользователе будет сохранена в базе данных
+        return $stmt->execute();
     }
 
     public function getLastAlarm($url = '') {
         // TODO: Функция должна вернуть ассоциативный массив из одного элемента вида ['url' = > $url, 'result' => $result, 'datetime' => $datetime события]
         // TODO: Если задан входной параметр $url, то ищется самый поздний по времени алярм именно по этому урлу, ИНАЧЕ ищется просто самый последний алярм
+        // TODO: Подумать вообще нужен ли такой метод?
     }
 
     // Получение настроек предупреждений для заданного пользователя
     public function getSiteAlarmActions($url, $user_id) {
-
+        // TODO: Написать метод
     }
 
     // Получение списка проверяемых сайтов

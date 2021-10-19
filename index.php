@@ -1,7 +1,7 @@
 <?php
     error_reporting(E_ALL);
-    ini_set('display_errors', TRUE);
-    ini_set('display_startup_errors', TRUE);
+    ini_set('display_errors', true);
+    ini_set('display_startup_errors', true);
 
     /*
     TODO: Надо разделить файл, который вызывается по крону и который выполняет проверку сайтов
